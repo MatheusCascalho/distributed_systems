@@ -15,9 +15,24 @@ class MotorDataModel:
     electrical_constant: float
 
 
+def motor_code_generator():
+    i = 0
+    while True:
+        yield i
+        i += 1
+
+
 class Motor:
+    __CODE_GENERATOR = motor_code_generator()
+
     def __init__(self, data_model: MotorDataModel):
         self.data_model = data_model
+        self.code = next(self.__CODE_GENERATOR)
+
+    def __str__(self):
+        return f"Motor_{self.code}"
+
+    __repr__ = __str__
 
     def armature_circuit(self) -> ctrl.TransferFunction:
         num = [1 / self.data_model.resistence]
