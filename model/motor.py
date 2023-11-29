@@ -70,6 +70,15 @@ class Motor:
         time, response = ctrl.step_response(self.closed_loop(), time)
         return time, response
 
+    def forced_response(self, input, last_response, time, discretization=1e-3):
+        time, response = ctrl.forced_response(
+            self.closed_loop(),
+            [time, time+(2*discretization)],
+            [input, input],
+            [last_response, last_response]
+        )
+        return time, response
+
     def plot_step_response(self, horizon):
         time, response = self.step_response(horizon=horizon)
         plt.plot(time, response)
