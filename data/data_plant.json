@@ -1,0 +1,36 @@
+{
+  "engines": [
+    {
+      "resistence": 100,
+      "inductance": 1.0,
+      "torque": 5,
+      "inertia_moment": 18,
+      "viscous_friction": 4.5,
+      "electrical_constant": 7
+    },
+    {
+      "resistence": 10,
+      "inductance": 1.0,
+      "torque": 50,
+      "inertia_moment": 1.8,
+      "viscous_friction": 4.5,
+      "electrical_constant": 7
+    },
+    {
+      "resistence": 1,
+      "inductance": 1.0,
+      "torque": 75,
+      "inertia_moment": 0.18,
+      "viscous_friction": 4.5,
+      "electrical_constant": 7
+    },
+    {
+      "resistence": 0.1,
+      "inductance": 1.0,
+      "torque": 100,
+      "inertia_moment": 0.018,
+      "viscous_friction": 4.5,
+      "electrical_constant": 7
+    }
+  ]
+}
