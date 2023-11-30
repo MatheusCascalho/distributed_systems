@@ -61,7 +61,7 @@ class Motor:
 
     def closed_loop(self, load_torque=0) -> ctrl.TransferFunction:
         system = self.open_loop(load_torque)
-        closed = ctrl.feedback(system, self.data_model.electrical_constant)
+        closed = system / (1 + (system*self.data_model.electrical_constant))
         return closed
 
     def step_response(self, horizon, discretization=1e-3):
