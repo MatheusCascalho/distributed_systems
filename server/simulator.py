@@ -7,11 +7,12 @@ with open(file, "r") as inp:
     data = json.load(inp)
 
 signal = 1
-signal_time = 0
+signal_time = 3
 DO_SIMULATION = True
 simulation_time = 0
 discretization = 1e-4
-horizon = 20
+horizon = 2000
+time_disctretization = 1/10000
 
 data_models = [MotorDataModel(**model) for model in data['engines']]
 motors = [Motor(dm) for dm in data_models]
@@ -47,7 +48,7 @@ while True:
 
     if simulation_time >= horizon:
         DO_SIMULATION = False
-    time.sleep(1)
+    time.sleep(time_disctretization)
 
 
 
