@@ -1,4 +1,5 @@
 from model.motor import Motor, MotorDataModel
+import control as ctrl
 import json
 import time
 
@@ -23,7 +24,7 @@ calculus = {
 history = {
     str(motor): {
         "simulated": [],
-        "calculated": calculus[str(motor)][1],
+        "calculated": [0]*signal_time + list(calculus[str(motor)][1]),
         "time": calculus[str(motor)][0],
     }
     for motor in motors
@@ -34,16 +35,14 @@ while True:
         break
     s = 0 if simulation_time < signal_time else signal
     for motor in motors:
-        last_response = 0 if not history[str(motor)]['simulated'] else history[str(motor)]['simulated'][-1]
-        _, response = motor.forced_response(
-            input=s,
-            last_response=last_response,
-            time=history[str(motor)]['time'][simulation_time],
-            discretization=discretization
-        )
+        if s > 0:
+            time_data = [0, ((simulation_time+1)*discretization)-(signal_time*discretization)]
+            _, response = ctrl.step_response(motor.closed_loop(), time_data)
+        else:
+            response = [0]
         history[str(motor)]['simulated'].append(response[-1])
-    print("SIMULADO: ", history[str(motors[0])]['simulated'][-1])
-    print("CALCULADO: ", history[str(motors[0])]['calculated'][simulation_time])
+    print("SIMULADO: ", history[str(motors[2])]['simulated'][-1])
+    print("CALCULADO: ", history[str(motors[2])]['calculated'][simulation_time])
     simulation_time += 1
 
     if simulation_time >= horizon:
