@@ -30,10 +30,15 @@ history = {
     for motor in motors
 }
 
+def input_signal(i):
+    if 3 < i < 10:
+        return 1
+
+
 while True:
     if not DO_SIMULATION:
         break
-    s = 0 if simulation_time < signal_time else signal
+    s = input_signal(simulation_time)
     for motor in motors:
         if s > 0:
             time_data = [0, ((simulation_time+1)*discretization)-(signal_time*discretization)]
