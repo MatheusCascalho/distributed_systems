@@ -5,6 +5,8 @@ from interfaces.server_interface import IServer
 from dataclasses import dataclass
 from typing import Generator
 from multiprocessing import Process
+from threading import Thread
+from collections import defaultdict
 
 
 @dataclass
@@ -13,10 +15,17 @@ class MotorSnapshot:
     is_working: bool
     current_speed: float
 
+def default_snapshot():
+    return MotorSnapshot(
+        motor='motor',
+        is_working=False,
+        current_speed=0
+    )
+
 
 power_board: dict[str, bool] = {}
-plant_state: dict[str, MotorSnapshot] = {}
-process_map: dict[str, Process]
+plant_state: dict[str, MotorSnapshot] = defaultdict(default_snapshot)
+process_map: dict[str, Process] = {}
 
 
 def simulated_data(
@@ -83,18 +92,46 @@ def control_thread(
         )
         motor_simulators[str(motor)] = simulated_motor
         simulation_args = (motor, simulated_motor, 0.1)
-        motor_process = Process(target=motor_thread, args=simulation_args)
+        motor_process = Thread(target=motor_thread, args=simulation_args)
         motor_process.start()
         process_map[str(motor)] = motor_process
 
     # Choosing motor
     chosen_motors = motors[:4]
 
-    # Turn On choosen motors
-    for motor in chosen_motors:
-        power_board[str(motor)] = True
+    global power_board, plant_state
 
-    # send simulations to server
-    for motor in motors:
-        snapshot = plant_state[str(motor)]
-        server.send(data=snapshot)
+    while True:
+        # Turn On chosen motors
+        for motor in chosen_motors:
+            power_board[str(motor)] = True
+
+        # send simulations to server
+        for motor in motors:
+            snapshot = plant_state[str(motor)]
+            server.send(data=snapshot)
+
+
+if __name__ == '__main__':
+    import json
+    from model.motor import MotorDataModel
+
+
+    file = '../data/data_plant.json'
+    with open(file, "r") as inp:
+        data = json.load(inp)
+
+    data_models = [MotorDataModel(**model) for model in data['engines']]
+    motors = [Motor(dm) for dm in data_models]
+
+    class FakeServer(IServer):
+        def send(self, data):
+            print(data)
+
+    server = FakeServer()
+    cp = Thread(target=control_thread, args=(motors, 1, server))
+
+    cp.start()
+
+    cp.join()
+
