@@ -111,6 +111,8 @@ def control_thread(
             snapshot = plant_state[str(motor)]
             server.send(data=snapshot)
 
+        sleep(time_discretization)
+
 
 if __name__ == '__main__':
     import json
