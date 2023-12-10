@@ -5,11 +5,7 @@ from model.exceptions import MotorNotFoundError
 from model.process import MotorSnapshot
 
 
-class OPCProcessCommunication(IServer):
-    def __init__(self):
-        self.client = Client(self.server_url)
-        self.client.connect()
-
+class OPCDataClient:
     @property
     def server_url(self):
         return "opc.tcp://LAPTOP-289TONJ4:53530/OPCUA/SimulationServer"
@@ -31,6 +27,12 @@ class OPCProcessCommunication(IServer):
             "CurrentSimulationTime": "ns=3;i=1024"
         }
         return id_map
+
+
+class OPCProcessCommunication(IServer, OPCDataClient):
+    def __init__(self):
+        self.client = Client(self.server_url)
+        self.client.connect()
 
     def send(self, data: MotorSnapshot):
         node_id = self.process_map.get(data.motor)
