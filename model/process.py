@@ -16,6 +16,7 @@ class MotorSnapshot:
     is_working: bool
     current_speed: float
 
+
 def default_snapshot():
     return MotorSnapshot(
         motor='motor',
@@ -135,7 +136,8 @@ def control_thread(
                 continue
 
         motor_time += 1
-
+        if int(motor_time*time_discretization) % 2 == 0:
+            print(f"Power Board: {power_board}")
         sleep(time_discretization)
 
 

@@ -23,7 +23,7 @@ class OPCDataClient:
             "Motor_7": "ns=3;i=1011",
             "Motor_8": "ns=3;i=1018",
             "Motor_9": "ns=3;i=1020",
-            "StartNodes": "ns=3;i=1023",
+            "StartMotors": "ns=3;i=1023",
             "CurrentSimulationTime": "ns=3;i=1024"
         }
         return id_map
@@ -42,7 +42,7 @@ class OPCProcessCommunication(IServer, OPCDataClient):
         self.client.set_values([node], [data.current_speed])
 
     def read_start_motors(self):
-        node_id = self.process_map.get("StartNodes")
+        node_id = self.process_map.get("StartMotors")
         if node_id is None:
             return [0, 1, 2, 3]
         node = self.client.get_node(node_id)
