@@ -29,7 +29,7 @@ for server in servers:
 # parent_id = "ns=2;i=10158"
 # parent_id = "ns=3;s=85/0:Simulation"
 # parent_node = client.get_node(parent_id)
-node_test = "ns=3;i=1009"
+node_test = "ns=3;i=1022"
 node = client.get_node(node_test)
 
 # node_name = "VariavelCascalho"
@@ -37,9 +37,10 @@ node_value = 44.986  #"Matheus Cascalho dos Santos"
 
 # node = parent_node.add_variable(nodeid=2, bname=node_name, val=node_value)
 
-client.set_values([node], [node_value])
+values = client.get_values([node])
+client.set_values([node], ["0.4.9.2"])
 
-print(client)
+print(values)
 
 client.disconnect()
 
