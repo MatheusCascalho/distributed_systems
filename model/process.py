@@ -109,11 +109,13 @@ def control_thread(
     motor_time = 0
 
     while True:
+        server.send_current_time(int(motor_time*time_discretization))
         if motor_time >= time_by_motor / time_discretization:
             motor_ids = server.read_start_motors()
             chosen_motors = [
                 motors[i] for i in motor_ids
             ]
+            motor_time = 0
 
         # Turn On chosen motors
         for motor in chosen_motors:

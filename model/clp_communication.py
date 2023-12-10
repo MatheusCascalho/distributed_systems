@@ -27,7 +27,8 @@ class CLPCommunication(IServer):
             "Motor_7": "ns=3;i=1011",
             "Motor_8": "ns=3;i=1018",
             "Motor_9": "ns=3;i=1020",
-            "StartNodes": "ns=3;i=1023"
+            "StartNodes": "ns=3;i=1023",
+            "CurrentSimulationTime": "ns=3;i=1024"
         }
         return id_map
 
@@ -46,6 +47,11 @@ class CLPCommunication(IServer):
         value = self.client.get_values([node])
         start_motors = [int(v) for v in value[0].split(".")]
         return start_motors
+
+    def send_current_time(self, data):
+        node_id = self.process_map.get("CurrentSimulationTime")
+        node = self.client.get_node(node_id)
+        self.client.set_values([node], [data], )
 
     def __del__(self):
         self.client.disconnect()

@@ -6,6 +6,9 @@ class IServer(ABC):
     def send(self, data):
         pass
 
+    def send_current_time(self, data):
+        pass
+
     @abstractmethod
     def read_start_motors(self):
         pass

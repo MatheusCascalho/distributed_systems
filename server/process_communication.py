@@ -19,7 +19,7 @@ kwargs = {
     "motors": motors,
     "reference_speed": 1,
     "server": server,
-    "time_by_motor": 1
+    "time_by_motor": 10
 }
 cp = Thread(target=control_thread, kwargs=kwargs)
 
