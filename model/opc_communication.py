@@ -5,7 +5,7 @@ from model.exceptions import MotorNotFoundError
 from model.process import MotorSnapshot
 
 
-class CLPCommunication(IServer):
+class OPCProcessCommunication(IServer):
     def __init__(self):
         self.client = Client(self.server_url)
         self.client.connect()

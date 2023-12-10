@@ -1,6 +1,6 @@
 import json
 from model.motor import MotorDataModel, Motor
-from model.clp_communication import CLPCommunication
+from model.opc_communication import OPCProcessCommunication
 from model.process import control_thread
 from threading import Thread
 
@@ -13,7 +13,7 @@ data_models = [MotorDataModel(**model) for model in data['engines']]
 motors = [Motor(dm) for dm in data_models]
 
 
-server = CLPCommunication()
+server = OPCProcessCommunication()
 # reference_speed = 1
 kwargs = {
     "motors": motors,
