@@ -7,6 +7,7 @@ from typing import Generator
 from multiprocessing import Process
 from threading import Thread
 from collections import defaultdict
+from model.exceptions import MotorNotFoundError
 
 
 @dataclass
@@ -109,7 +110,10 @@ def control_thread(
         # send simulations to server
         for motor in motors:
             snapshot = plant_state[str(motor)]
-            server.send(data=snapshot)
+            try:
+                server.send(data=snapshot)
+            except MotorNotFoundError:
+                continue
 
         sleep(time_discretization)
 
