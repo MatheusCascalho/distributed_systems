@@ -27,6 +27,7 @@ class CLPCommunication(IServer):
             "Motor_7": "ns=3;i=1011",
             "Motor_8": "ns=3;i=1018",
             "Motor_9": "ns=3;i=1020",
+            "StartNodes": "ns=3;i=1023"
         }
         return id_map
 
@@ -36,6 +37,15 @@ class CLPCommunication(IServer):
             raise MotorNotFoundError(data.motor)
         node = self.client.get_node(node_id)
         self.client.set_values([node], [data.current_speed])
+
+    def read_start_motors(self):
+        node_id = self.process_map.get("StartNodes")
+        if node_id is None:
+            return [0, 1, 2, 3]
+        node = self.client.get_node(node_id)
+        value = self.client.get_values([node])
+        start_motors = [int(v) for v in value[0].split(".")]
+        return start_motors
 
     def __del__(self):
         self.client.disconnect()

@@ -14,9 +14,14 @@ motors = [Motor(dm) for dm in data_models]
 
 
 server = CLPCommunication()
-reference_speed = 1
-
-cp = Thread(target=control_thread, args=(motors, reference_speed, server))
+# reference_speed = 1
+kwargs = {
+    "motors": motors,
+    "reference_speed": 1,
+    "server": server,
+    "time_by_motor": 1
+}
+cp = Thread(target=control_thread, kwargs=kwargs)
 
 cp.start()
 

@@ -26,7 +26,7 @@ def default_snapshot():
 
 power_board: dict[str, bool] = {}
 plant_state: dict[str, MotorSnapshot] = defaultdict(default_snapshot)
-process_map: dict[str, Process] = {}
+process_map: dict[str, Thread] = {}
 
 
 def simulated_data(
@@ -92,7 +92,11 @@ def control_thread(
             horizon=time_by_motor,
         )
         motor_simulators[str(motor)] = simulated_motor
-        simulation_args = (motor, simulated_motor, 0.1)
+        simulation_args = (
+            motor,
+            simulated_motor,  # data generator
+            0.1,  # simulation period - in seconds
+        )
         motor_process = Thread(target=motor_thread, args=simulation_args)
         motor_process.start()
         process_map[str(motor)] = motor_process
@@ -102,10 +106,23 @@ def control_thread(
 
     global power_board, plant_state
 
+    motor_time = 0
+
     while True:
+        if motor_time >= time_by_motor / time_discretization:
+            motor_ids = server.read_start_motors()
+            chosen_motors = [
+                motors[i] for i in motor_ids
+            ]
+
         # Turn On chosen motors
         for motor in chosen_motors:
             power_board[str(motor)] = True
+
+        # Turn Off chosen motors
+        for motor in motors:
+            if motor not in chosen_motors:
+                power_board[str(motor)] = False
 
         # send simulations to server
         for motor in motors:
@@ -114,6 +131,8 @@ def control_thread(
                 server.send(data=snapshot)
             except MotorNotFoundError:
                 continue
+
+        motor_time += 1
 
         sleep(time_discretization)
 
@@ -135,7 +154,13 @@ if __name__ == '__main__':
             print(data)
 
     server = FakeServer()
-    cp = Thread(target=control_thread, args=(motors, 1, server))
+    kwargs = {
+        "motors": motors,
+        "reference_speed": 1,
+        "server": server,
+        "time_by_motor": 1
+    }
+    cp = Thread(target=control_thread, kwargs=kwargs)
 
     cp.start()
 
