@@ -2,3 +2,4 @@ control
 numpy
 matplotlib
 opcua
+flask
