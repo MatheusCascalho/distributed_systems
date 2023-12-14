@@ -77,7 +77,7 @@ def read_motors_speed():
 opc_client = CLPClient()
 
 opc = Thread(target=opc_client.run)
-tcp = Thread(target=server.run)
+tcp = Thread(target=server.run, kwargs={"host": "0.0.0.0"})
 
 tcp.start()
 opc.start()
