@@ -38,7 +38,7 @@ class HTTPCLient:
     def get_motors_speed(self):
         url = f"{self.url}/{self.motors_speed}"
         resp = requests.get(url=url)
-        return resp
+        return resp.json()
 
     def set_motors_to_run(self, motors: list[int]):
         url = f"{self.url}/{self.set_motors}"
@@ -52,12 +52,17 @@ class HTTPCLient:
         while True:
             resp = self.get_motors_speed()
             print(resp)
+            # for
+            with open("historiador.txt", "a") as file:
+                file.write(str(resp))
+                file.write("\n")
             time.sleep(2)
 
 
 if __name__ == "__main__":
     client = HTTPCLient()
-    client.speed_monitor()
+    res = client.speed_monitor()
+    print(res)
 
 # x = np.arange(1, 6)
 #
