@@ -47,6 +47,8 @@ class OPCProcessCommunication(IServer, OPCDataClient):
             return [0, 1, 2, 3]
         node = self.client.get_node(node_id)
         value = self.client.get_values([node])
+        if not value:
+            value = ["0.2.4.6"]
         start_motors = [int(v) for v in value[0].split(".")]
         return start_motors
 
