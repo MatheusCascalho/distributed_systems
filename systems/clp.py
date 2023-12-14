@@ -46,14 +46,22 @@ class CLPClient(OPCDataClient):
 
 # class TCPServer:
 server = Flask(__name__)
-spec = FlaskPydanticSpec('flask', title='Spec of Games')
-spec.register(server)
+
+
+def are_valid_engines(motors):
+    ordered_motors = sorted(motors)
+    for i, motor in enumerate(ordered_motors[:-1]):
+        if ordered_motors[i+1] == motor:
+            return False
+    return True
 
 
 @server.route("/set_motors", methods=['POST'])
 def set_motors_to_run():
     data = request.get_json()
     motors = data.get('motors', [])
+    if not are_valid_engines(motors):
+        return jsonify({"error": "Não é possível ligar dois motores consecutivos"}), 400
     global motors_to_run
     motors_to_run = motors
     return jsonify({"status": "ok"})
