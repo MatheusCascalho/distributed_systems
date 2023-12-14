@@ -1,8 +1,6 @@
 from model.opc_communication import OPCDataClient
 from opcua import Client
 from flask import Flask, request, jsonify
-from flask_pydantic_spec import FlaskPydanticSpec
-from flask_pydantic_spec.types import Response
 from time import sleep
 from threading import Thread
 
@@ -62,7 +60,6 @@ def set_motors_to_run():
 
 
 @server.get("/motors_speed")
-# @spec.validate(resp=Response(HTTP_200="ok"))
 def read_motors_speed():
     global motors_speed
     data = motors_speed.copy()

@@ -76,7 +76,7 @@ def control_thread(
         server: IServer,
         time_by_motor: int = 60,
         simulation_time: int = 60,
-        time_discretization: float = 0.2
+        period: float = 0.2
 ):
     # Project a proportional control
     set_point = reference_speed / 2
@@ -110,8 +110,8 @@ def control_thread(
     motor_time = 0
 
     while True:
-        server.send_current_time(int(motor_time*time_discretization))
-        if motor_time >= time_by_motor / time_discretization:
+        server.send_current_time(int(motor_time * period))
+        if motor_time >= time_by_motor / period:
             motor_ids = server.read_start_motors()
             chosen_motors = [
                 motors[i] for i in motor_ids
@@ -136,15 +136,14 @@ def control_thread(
                 continue
 
         motor_time += 1
-        if int(motor_time*time_discretization) % 2 == 0:
+        if int(motor_time * period) % 2 == 0:
             print(f"Power Board: {power_board}")
-        sleep(time_discretization)
+        sleep(period)
 
 
 if __name__ == '__main__':
     import json
     from model.motor import MotorDataModel
-
 
     file = '../data/data_plant.json'
     with open(file, "r") as inp:
